@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkAuth: async () => {
-        const { token } = get();
+        const { token, currentUser } = get();
         if (!token) {
           set({ isAuthenticated: false, isLoading: false });
           return;
@@ -54,6 +54,12 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true });
         
         try {
+          // 如果已经有用户数据，直接设置为已认证
+          if (currentUser) {
+            set({ isAuthenticated: true });
+            return;
+          }
+
           // 这里可以调用验证token的API
           // const response = await authApi.getCurrentUser();
           // if (response) {
@@ -62,8 +68,15 @@ export const useAuthStore = create<AuthState>()(
           //   get().logout();
           // }
           
-          // 临时模拟：如果有token就认为已认证
-          set({ isAuthenticated: true });
+          // 临时模拟：创建默认用户
+          const defaultUser: User = {
+            id: '1',
+            username: 'admin',
+            email: 'admin@example.com',
+            role: 'admin',
+            createdAt: new Date().toISOString(),
+          };
+          set({ currentUser: defaultUser, isAuthenticated: true });
         } catch (error) {
           console.error('Auth check failed:', error);
           get().logout();

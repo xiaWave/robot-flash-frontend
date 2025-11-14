@@ -300,7 +300,6 @@ export interface SystemConfig {
   timezone: string;
   features: {
     enableNotifications: boolean;
-    enableAutoRefresh: boolean;
     enableDebugMode: boolean;
   };
   limits: {

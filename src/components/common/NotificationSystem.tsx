@@ -31,7 +31,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   const addNotification = useCallback((notification: Omit<Notification, 'id' | 'timestamp'>) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = Math.random().toString(36).slice(2, 11);
     const newNotification: Notification = {
       ...notification,
       id,
@@ -87,16 +87,37 @@ export function useNotificationHelpers() {
 
   return {
     success: (title: string, message?: string, options?: Partial<Notification>) =>
-      addNotification({ type: 'success', title, message, ...options }),
+      addNotification({ 
+        type: 'success', 
+        title, 
+        ...(message !== undefined && { message }), 
+        ...options 
+      }),
     
     error: (title: string, message?: string, options?: Partial<Notification>) =>
-      addNotification({ type: 'error', title, message, duration: 0, ...options }),
+      addNotification({ 
+        type: 'error', 
+        title, 
+        ...(message !== undefined && { message }), 
+        duration: 0, 
+        ...options 
+      }),
     
     warning: (title: string, message?: string, options?: Partial<Notification>) =>
-      addNotification({ type: 'warning', title, message, ...options }),
+      addNotification({ 
+        type: 'warning', 
+        title, 
+        ...(message !== undefined && { message }), 
+        ...options 
+      }),
     
     info: (title: string, message?: string, options?: Partial<Notification>) =>
-      addNotification({ type: 'info', title, message, ...options }),
+      addNotification({ 
+        type: 'info', 
+        title, 
+        ...(message !== undefined && { message }), 
+        ...options 
+      }),
   };
 }
 

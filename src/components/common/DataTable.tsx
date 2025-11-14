@@ -7,21 +7,16 @@ import {
   TableRow,
 } from '../ui/table';
 import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
 import { Checkbox } from '../ui/checkbox';
 import { cn } from '../ui/utils';
 import { 
   MoreHorizontal, 
-  Pencil, 
-  Trash2, 
-  Eye,
   Loader2 
 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
@@ -102,8 +97,8 @@ export function DataTable<T extends Record<string, any>>({
       ? [...selection.selectedRowKeys, rowKey]
       : selection.selectedRowKeys.filter(key => key !== rowKey);
     
-    const selectedRows = data.filter((_, i) => 
-      newSelectedKeys.includes(getRowKey(data[i], i))
+    const selectedRows = data.filter((record, i) => 
+      newSelectedKeys.includes(getRowKey(record, i))
     );
     
     selection.onChange(newSelectedKeys, selectedRows);
@@ -144,8 +139,8 @@ export function DataTable<T extends Record<string, any>>({
                   <TableHead className="w-12">
                     <Checkbox
                       checked={isAllSelected}
-                      onCheckedChange={handleSelectAll}
-                      indeterminate={isIndeterminate}
+                      onCheckedChange={(checked) => handleSelectAll(checked === true)}
+                      data-indeterminate={isIndeterminate}
                     />
                   </TableHead>
                 )}
@@ -199,9 +194,9 @@ export function DataTable<T extends Record<string, any>>({
                       {selection && (
                         <TableCell>
                           <Checkbox
-                            checked={isSelected}
+                            checked={isSelected || false}
                             onCheckedChange={(checked) => 
-                              handleSelectRow(checked as boolean, record, index)
+                              handleSelectRow(checked === true, record, index)
                             }
                           />
                         </TableCell>
@@ -238,7 +233,7 @@ export function DataTable<T extends Record<string, any>>({
                                   <DropdownMenuItem
                                     key={action.key}
                                     onClick={() => action.onClick(record, index)}
-                                    disabled={action.disabled?.(record)}
+                                    disabled={action.disabled?.(record) || false}
                                     className={cn(
                                       action.danger && 'text-destructive focus:text-destructive'
                                     )}

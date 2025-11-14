@@ -112,7 +112,7 @@ export const useTasksQuery = (params: PaginationParams = {}) => {
     queryFn: () => api.taskApi.getList(params),
     staleTime: 5_000, // 任务状态变化很快，使用更短的缓存时间
     gcTime: 1 * 60 * 1000,
-    refetchInterval: 10_000, // 自动刷新间隔10秒
+
   });
 };
 
@@ -122,7 +122,7 @@ export const useTaskQuery = (id: string) => {
     queryFn: () => api.taskApi.getById(id),
     enabled: !!id,
     staleTime: 5_000,
-    refetchInterval: 5_000, // 任务详情自动刷新间隔5秒
+
   });
 };
 

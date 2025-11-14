@@ -33,23 +33,13 @@ export function TaskManagementPage() {
   const [showDetail, setShowDetail] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [autoRefresh, setAutoRefresh] = useState(true);
   const [showRealtimeLogs, setShowRealtimeLogs] = useState(true);
 
   const tasksQuery = useTaskListQuery({ page, pageSize });
   const { data: pagedTasks, refetch } = tasksQuery;
   const total = pagedTasks?.total ?? 0;
 
-  // 自动刷新任务列表
-  useEffect(() => {
-    if (!autoRefresh) return;
-    
-    const interval = setInterval(() => {
-      refetch({ throwOnError: false, cancelRefetch: false });
-    }, 3000);
 
-    return () => clearInterval(interval);
-  }, [autoRefresh, refetch]);
 
   // 模拟任务状态更新
   useEffect(() => {
@@ -82,21 +72,7 @@ export function TaskManagementPage() {
     return () => clearInterval(interval);
   }, [selectedTask, showDetail, upsertTask, refetch]);
 
-  // 键盘快捷键
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showDetail) {
-        handleBackToList();
-      }
-      if (event.key === 'r' && event.ctrlKey) {
-        event.preventDefault();
-        refetch();
-      }
-    };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [showDetail, refetch]);
 
   const handleViewDetails = (task: FlashTask) => {
     setFocusedTaskId(task.id);
@@ -244,16 +220,7 @@ export function TaskManagementPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {!showDetail && (
-            <Button
-              variant={autoRefresh ? "default" : "outline"}
-              size="sm"
-              onClick={() => setAutoRefresh(!autoRefresh)}
-            >
-              <RefreshCw className={cn("w-4 h-4 mr-2", autoRefresh && "animate-spin")} />
-              {autoRefresh ? "自动刷新" : "手动刷新"}
-            </Button>
-          )}
+
           <Button variant="outline" onClick={() => refetch()} size="sm">
             <RefreshCw className="w-4 h-4 mr-2" />
             刷新

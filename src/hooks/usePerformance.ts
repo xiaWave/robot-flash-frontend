@@ -186,7 +186,7 @@ export function useRenderTracker(componentName: string) {
     const now = Date.now();
     const timeSinceLastRender = now - lastRenderRef.current;
     
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env['NODE_ENV'] === 'development') {
       console.log(
         `${componentName} rendered ${renderCountRef.current} times. ` +
         `Time since last render: ${timeSinceLastRender}ms`

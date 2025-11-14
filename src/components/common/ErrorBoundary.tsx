@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
     
     // 记录错误到控制台
@@ -35,17 +35,17 @@ export class ErrorBoundary extends Component<Props, State> {
     this.props.onError?.(error, errorInfo);
     
     // 在生产环境中，可以发送错误报告到监控服务
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       // 这里可以集成错误监控服务，如 Sentry
       // Sentry.captureException(error, { contexts: { react: { componentStack: errorInfo.componentStack } } });
     }
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined } as unknown as State);
   };
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       // 如果提供了自定义的fallback组件，使用它
       if (this.props.fallback) {
@@ -67,7 +67,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 抱歉，应用程序遇到了意外错误。请尝试刷新页面或联系技术支持。
               </p>
               
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {process.env['NODE_ENV'] === 'development' && this.state.error && (
                 <details className="text-left text-xs bg-muted p-3 rounded-md">
                   <summary className="cursor-pointer font-medium mb-2">错误详情</summary>
                   <pre className="whitespace-pre-wrap text-red-600">
@@ -106,11 +106,15 @@ export function withErrorBoundary<T extends object>(
   fallback?: ReactNode,
   onError?: (error: Error, errorInfo: ErrorInfo) => void
 ) {
-  const WrappedComponent = (props: T) => (
-    <ErrorBoundary fallback={fallback} onError={onError}>
-      <Component {...props} />
-    </ErrorBoundary>
-  );
+  const WrappedComponent = (props: T) => {
+    const boundaryProps: Props = {
+      children: <Component {...props} />,
+      ...(fallback !== undefined && { fallback }),
+      ...(onError !== undefined && { onError }),
+    };
+
+    return <ErrorBoundary {...boundaryProps} />;
+  };
 
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
 

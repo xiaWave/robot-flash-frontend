@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Progress } from '../ui/progress';
 import { Activity, Cpu, HardDrive, Zap, TrendingUp, TrendingDown } from 'lucide-react';
-import { cn } from '../ui/utils';
 
 // 性能指标接口
 interface PerformanceMetrics {

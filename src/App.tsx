@@ -21,7 +21,7 @@ import { wsService } from './services/websocket';
 import { useAuthStore } from './store/authStore';
 import type { User } from './types';
 import { GlobalProviders } from './components/common/GlobalErrorHandler';
-import { KeyboardShortcutsHelp, FloatingShortcutHelp } from './components/common/KeyboardShortcutsHelp';
+
 
 const ROUTE_LABEL_MAP: Record<string, string> = {
   flash: '刷机操作',
@@ -32,8 +32,13 @@ const ROUTE_LABEL_MAP: Record<string, string> = {
 };
 
 export default function App() {
-  const { currentUser, setUser } = useAuthStore();
+  const { currentUser, setUser, checkAuth } = useAuthStore();
   const navigate = useNavigate();
+
+  // 初始化时检查认证状态
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   useEffect(() => {
     if (currentUser) {
@@ -79,7 +84,7 @@ export default function App() {
           </>
         )}
       </Routes>
-      <FloatingShortcutHelp />
+
     </GlobalProviders>
   );
 }
@@ -140,7 +145,7 @@ function AppTopBar() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <KeyboardShortcutsHelp />
+
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <Clock className="w-4 h-4 text-indigo-500 animate-pulse" />
             <span className="font-mono font-medium">{currentTime.toLocaleTimeString()}</span>
